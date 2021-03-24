@@ -59,4 +59,5 @@ buck-out/
 /ios/Pods/
 
 # Lock files
-*.lock
+yarn.lock
+package-lock.json
