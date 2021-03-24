@@ -59,12 +59,8 @@ const App: React.FC = () => {
         img: 'https://sujeitoprogramador.com/wp-content/uploads/2020/05/freeguy.jpg'
     },
   ])
-  const [backgroundImage, setBackgroundImage] = useState(()=>{
-    let randomNumber = Math.round(Math.random()*5);
-    let selectedMovie = moviesList[randomNumber].img
-
-    return selectedMovie
-  })
+  const [backgroundImage, setBackgroundImage] = useState(moviesList[0].img)
+  const [activeIndex, setActiveIndex] = useState(0)
 
   const _renderItem = ({item, index}: RenderItemProps) => {
     return (
@@ -121,9 +117,22 @@ const App: React.FC = () => {
                 inactiveSlideOpacity={0.5}
                 onSnapToItem={index => {
                   setBackgroundImage(moviesList[index].img)
+                  setActiveIndex(index)
                 }}
               />
             </View>
+
+            <View style={styles.movieInfo}>
+              <View style={{marginTop: 10, width: '95%'}}>
+                <Text style={styles.movieInfoTitle} >{moviesList[activeIndex].title}</Text>
+                <Text style={styles.movieInfoText}>{moviesList[activeIndex].text}</Text>
+              </View>
+
+              <TouchableOpacity style={{marginRight: 15, marginTop: 10}}>
+                <Icon name="queue" color="#131313" size={30} />
+              </TouchableOpacity>
+            </View>
+
           </ImageBackground>
         </View>
       </View>
@@ -192,6 +201,28 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 15,
     right: 15
+  },
+  movieInfo: {
+    backgroundColor: '#fff',
+    width: screenWidth,
+    height: screenHeight,
+    borderTopRightRadius: 20,
+    borderTopLeftRadius: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-around'
+  },
+  movieInfoTitle: {
+    paddingLeft: 15,
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#131313',
+    marginBottom: 5,
+  },
+  movieInfoText: {
+    paddingLeft: 15,
+    color: '#131313',
+    fontSize: 15,
+    fontWeight: 'bold'
   }
 })
 
