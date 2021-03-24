@@ -1,12 +1,27 @@
-import React, {useState} from 'react';
-import { View, ScrollView, Text, StyleSheet, Dimensions, ImageBackground, TextInput, TouchableOpacity } from 'react-native';
+import React, {useState, useRef} from 'react';
+import { View, ScrollView, Text, StyleSheet, Dimensions, ImageBackground, TextInput, TouchableOpacity, Image } from 'react-native';
 
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import Carousel, {CarouselProps} from 'react-native-snap-carousel'
 
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window')
 
+interface MovieProps {
+  title: string
+  text: string
+  release: number
+  img: string
+} 
+
+interface RenderItemProps {
+  item: MovieProps
+  index: number
+}
+
 const App: React.FC = () => {
-  const [moviesList, setMoviesList] = useState([
+  const carouselRef = useRef(null)
+
+  const [moviesList, setMoviesList] = useState<MovieProps[]>([
     {
         title:"O Justiceiro",
         text: "Após o assassinato de sua família, Frank Castle está traumatizado e sendo caçado. No submundo do crime, ele se tornará aquele conhecido como O Justiceiro",
@@ -51,6 +66,23 @@ const App: React.FC = () => {
     return selectedMovie
   })
 
+  const _renderItem = ({item, index}: RenderItemProps) => {
+    return (
+      <View>
+        <TouchableOpacity>
+          <Image 
+            source={{uri: item.img}}
+            style={styles.carouselImage}
+          />
+          <Text style={styles.carouselTitle}>
+            {item.title}
+          </Text>
+          <Icon name='play-circle-outline' size={30} color='#fff' style={styles.carouselIcon} />
+        </TouchableOpacity>
+      </View>
+    )
+  }
+
 
   return (
     <ScrollView style={styles.container}>
@@ -70,6 +102,27 @@ const App: React.FC = () => {
               <TouchableOpacity style={styles.icon}>
                 <Icon name='search' color='#000' size={25} />
               </TouchableOpacity>
+            </View>
+
+            <Text
+              style={{color: '#fff', fontSize: 25, marginLeft: 10, marginVertical: 10}}
+            >
+              Acabou de chegar
+            </Text>
+
+            <View style={styles.carouselContainer} >
+              <Carousel 
+                style={styles.carousel}
+                ref={carouselRef}
+                data={moviesList}
+                renderItem={_renderItem}
+                sliderWidth={screenWidth}
+                itemWidth={200}
+                inactiveSlideOpacity={0.5}
+                onSnapToItem={index => {
+                  setBackgroundImage(moviesList[index].img)
+                }}
+              />
             </View>
           </ImageBackground>
         </View>
@@ -109,6 +162,36 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 20,
     top: 15
+  },
+  carouselContainer: {
+    width: '100%',
+    height: 350,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  carousel: {
+    flex: 1,
+    overflow: 'visible'
+  },
+  carouselImage: {
+    alignSelf: 'center',
+    width: 200,
+    height: 300,
+    borderRadius: 12,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+  },
+  carouselTitle: {
+    padding: 15,
+    color: '#fff',
+    position: 'absolute',
+    bottom: 10,
+    left: 2,
+    fontWeight: 'bold'
+  },
+  carouselIcon: {
+    position: 'absolute',
+    top: 15,
+    right: 15
   }
 })
 
